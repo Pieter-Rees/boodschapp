@@ -58,6 +58,52 @@
         <input id="m" autocomplete="off" />
         <button>Send</button>
     </form>
+
+    <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyB7ztryfSFZGUwCp5Z5W2rosTfjt0iR4QY",
+            authDomain: "boodschapp-9ca88.firebaseapp.com",
+            databaseURL: "https://boodschapp-9ca88.firebaseio.com",
+            projectId: "boodschapp-9ca88",
+            storageBucket: "",
+            messagingSenderId: "677727386141"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(function () {
+            var database = firebase.database();
+            
+            var socket = io();
+            $('form').submit(function () {
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+
+                return false;
+            });
+            socket.on('chat message', function (msg) {
+                $('#messages').append($('<li>').text(msg));      
+                database.ref('/').push(msg);          
+            });
+        });
+
+        var ref = firebase.database().ref();
+    
+        ref.on("value", function (snapshot) {
+            console.log(snapshot.val());
+        }, function (error) {
+            console.log("Error: " + error.code);
+        });
+    </script>
 </body>
 
 </html>
